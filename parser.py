@@ -1,4 +1,3 @@
-
 import posixpath
 import re
 from collections import defaultdict
@@ -6,7 +5,6 @@ from .core import digest
 
 IDENTITY = re.compile(r"msg=audit\((\d+(?:\.\d+)?):(\d+)\)")
 FIELD = re.compile(r'(\w+)=(?:"([^"\n]*)"|([^\s\'\"]+))')
-
 
 def fields(line):
     result = {}
@@ -16,10 +14,8 @@ def fields(line):
             value = decode_hex(value)
         result[m.group(1)] = value
     return result
-
-
+    
 def decode_hex(value):
-    # Audit encodes paths/executables with special characters as hexadecimal.
     if value and re.fullmatch(r"(?:[0-9A-Fa-f]{2})+", value):
         try:
             decoded = bytes.fromhex(value).decode("utf-8")
@@ -41,14 +37,12 @@ def os_details(row, stamp, serial, path=None):
         syscall=row.get("syscall"), architecture=row.get("arch"),
         inode=path.get("inode"), device=path.get("dev"))
 
-
 def parse_audit(text, host, origin="live", boot_id=None):
     for record in _parse_audit(text, host, origin):
         if boot_id:
             record["source_id"] = digest(f"{boot_id}:{record['source_id']}")
             record["_boot"] = boot_id
         yield record
-
 
 def _parse_audit(text, host, origin):
     groups = defaultdict(list)
@@ -61,7 +55,7 @@ def _parse_audit(text, host, origin):
             if (row.get("type") == "USER_AUTH" and row.get("res") == "failed"
                     and posixpath.basename(row.get("exe", "")) in
                     ("sshd", "sshd-session", "sshd-auth", "login")):
-                # USER_AUTH only: counting USER_LOGIN as well would double-count PAM attempts.
+                        
                 account = row.get("acct") or "unknown"
                 yield dict(source_id=digest(f"{host}:{origin}:{stamp}:{serial}:auth:{index}"),
                     host=host, timestamp=int(float(stamp)), kind="login_failure",
