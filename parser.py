@@ -60,7 +60,6 @@ def _parse_audit(text, host, origin):
             if (row.get("type") == "USER_AUTH" and row.get("res") == "failed"
                     and posixpath.basename(row.get("exe", "")) in
                     ("sshd", "sshd-session", "sshd-auth", "login")):
-                # USER_AUTH only: counting USER_LOGIN as well would double-count PAM attempts.
                 account = row.get("acct") or "unknown"
                 yield dict(source_id=digest(f"{host}:{origin}:{stamp}:{serial}:auth:{index}"),
                     host=host, timestamp=int(float(stamp)), kind="login_failure",
