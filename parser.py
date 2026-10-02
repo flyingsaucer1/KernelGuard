@@ -19,7 +19,6 @@ def fields(line):
 
 
 def decode_hex(value):
-    # Audit encodes paths/executables with special characters as hexadecimal.
     if value and re.fullmatch(r"(?:[0-9A-Fa-f]{2})+", value):
         try:
             decoded = bytes.fromhex(value).decode("utf-8")
