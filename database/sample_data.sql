@@ -26,3 +26,14 @@ VALUES
 (2, 2, 2, '2026-10-06 11:30:00', 'DEVICE_CONNECTED', 'udevd', 'USB002', 'auditd', 'hash003'),
 
 (3, 3, NULL, '2026-10-06 22:45:00', 'FILE_ACCESS', 'cp', '/home/arshpreet/sensitive.txt', 'auditd', 'hash004');
+INSERT INTO alerts
+(user_id, event_id, alert_time, alert_type, severity, reason, status)
+VALUES
+(1, 2, '2026-10-06 11:00:05', 'SUSPICIOUS_FILE_ACCESS', 'HIGH',
+ 'Access to important project file', 'OPEN'),
+
+(2, 3, '2026-10-06 11:30:05', 'UNKNOWN_DEVICE', 'MEDIUM',
+ 'Unknown USB device connected', 'OPEN'),
+
+(3, 4, '2026-10-06 22:45:05', 'AFTER_HOURS_ACCESS', 'HIGH',
+ 'Sensitive file accessed outside normal hours', 'OPEN');
