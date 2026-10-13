@@ -28,11 +28,19 @@
 </li>
 
 <li class="nav-item">
-<a class="nav-link text-white" href="#">🚨 Alerts</a>
+    <a class="nav-link text-white" href="/sessions">🕒 Sessions</a>
 </li>
 
 <li class="nav-item">
-<a class="nav-link text-white" href="#">👤 Users</a>
+    <a class="nav-link text-white" href="/devices">💻 Devices</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link text-white "href="/alerts">🚨 Alerts</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link text-white" href="/users">👤 Users</a>
 </li>
 
 </ul>
@@ -134,6 +142,7 @@ Search
 <th>Process</th>
 <th>Resource</th>
 <th>Time</th>
+<th>Action</th>
 
 </tr>
 
@@ -151,7 +160,12 @@ Search
 <td>{{ event.process_name }}</td>
 <td>{{ event.resource }}</td>
 <td>{{ event.event_time }}</td>
-
+<td>
+    <a href="/event/{{ event.event_id }}"
+       class="btn btn-sm btn-primary">
+       View
+    </a>
+</td>
 </tr>
 
 {% endfor %}
@@ -164,7 +178,76 @@ Search
 <h3>Alert Evidence</h3>
 
 <table class="table table-bordered table-striped">
+    <hr>
 
+<div class="card mt-4">
+
+    <div class="card-header bg-dark text-white">
+        <h4>🕒 Recent Activities</h4>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered table-striped">
+
+            <thead>
+
+                <tr>
+                    <th>Event</th>
+                    <th>Process</th>
+                    <th>Time</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for event in recent_events %}
+
+                <tr>
+                    <td>{{ event.event_type }}</td>
+                    <td>{{ event.process_name }}</td>
+                    <td>{{ event.event_time }}</td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+<hr>
+
+<h3>🕒 Recent Activities</h3>
+
+<table class="table table-bordered table-striped">
+
+<thead class="table-dark">
+<tr>
+    <th>Event</th>
+    <th>Process</th>
+    <th>Time</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for event in recent_events %}
+
+<tr>
+    <td>{{ event.event_type }}</td>
+    <td>{{ event.process_name }}</td>
+    <td>{{ event.event_time }}</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
     <thead class="table-danger">
         <tr>
             <th>Alert ID</th>
@@ -194,10 +277,24 @@ Search
     </tbody>
 
 </table>
+<hr>
 
+<h3>Dashboard Analytics</h3>
+
+<div class="row">
+
+    <div class="col-md-6">
+        <canvas id="eventChart"></canvas>
+    </div>
+
+    <div class="col-md-6">
+        <canvas id="alertChart"></canvas>
+    </div>
+
+</div>
 </div>
 
 </div>
-
+ 
 </body>
 </html>
