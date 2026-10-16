@@ -1,1 +1,21 @@
-
+type=USER_AUTH msg=audit(1788856200.100:100): pid=2300 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:authentication acct="testuser" exe="/usr/sbin/sshd" hostname=? addr=127.0.0.1 terminal=ssh res=failed'
+type=USER_AUTH msg=audit(1788856260.100:101): pid=2300 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:authentication acct="testuser" exe="/usr/sbin/sshd" hostname=? addr=127.0.0.1 terminal=ssh res=failed'
+type=USER_AUTH msg=audit(1788856320.100:102): pid=2300 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:authentication acct="testuser" exe="/usr/sbin/sshd" hostname=? addr=127.0.0.1 terminal=ssh res=failed'
+type=USER_AUTH msg=audit(1788856380.100:103): pid=2300 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:authentication acct="testuser" exe="/usr/sbin/sshd" hostname=? addr=127.0.0.1 terminal=ssh res=failed'
+type=USER_AUTH msg=audit(1788856440.100:104): pid=2300 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:authentication acct="testuser" exe="/usr/sbin/sshd" hostname=? addr=127.0.0.1 terminal=ssh res=failed'
+type=SYSCALL msg=audit(1788841800.200:200): arch=c000003e syscall=257 success=yes exit=3 ppid=2000 pid=2400 auid=1001 uid=1001 euid=1001 ses=4 exe="/usr/bin/cat" key="kernelguard_protected"
+type=CWD msg=audit(1788841800.200:200): cwd="/home/testuser"
+type=PATH msg=audit(1788841800.200:200): item=0 name="/srv/kernelguard/protected/budget.txt" inode=123 dev=08:01 mode=0100644 nametype=NORMAL
+type=EOE msg=audit(1788841800.200:200):
+type=SYSCALL msg=audit(1788885000.200:201): arch=c000003e syscall=257 success=yes exit=3 ppid=2000 pid=2400 auid=1001 uid=1001 euid=1001 ses=4 exe="/usr/bin/cat" key="kernelguard_protected"
+type=CWD msg=audit(1788885000.200:201): cwd="/home/testuser"
+type=PATH msg=audit(1788885000.200:201): item=0 name="/srv/kernelguard/protected/budget.txt" inode=123 dev=08:01 mode=0100644 nametype=NORMAL
+type=EOE msg=audit(1788885000.200:201):
+type=SYSCALL msg=audit(1788885000.200:202): arch=c000003e syscall=257 success=no exit=3 ppid=2000 pid=2400 auid=1001 uid=1001 euid=1001 ses=4 exe="/usr/bin/cat" key="kernelguard_protected"
+type=CWD msg=audit(1788885000.200:202): cwd="/home/testuser"
+type=PATH msg=audit(1788885000.200:202): item=0 name="/srv/kernelguard/protected/notes.txt" inode=123 dev=08:01 mode=0100644 nametype=NORMAL
+type=EOE msg=audit(1788885000.200:202):
+type=SYSCALL msg=audit(1788845400.200:203): arch=c000003e syscall=257 success=yes exit=3 ppid=2000 pid=2400 auid=1001 uid=1001 euid=1001 ses=4 exe="/usr/bin/cat" key="kernelguard_protected"
+type=CWD msg=audit(1788845400.200:203): cwd="/home/testuser"
+type=PATH msg=audit(1788845400.200:203): item=0 name="/srv/kernelguard/protected/notes.txt" inode=123 dev=08:01 mode=0100644 nametype=NORMAL
+type=EOE msg=audit(1788845400.200:203):
