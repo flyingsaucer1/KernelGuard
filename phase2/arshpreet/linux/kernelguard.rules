@@ -1,0 +1,15 @@
+# x86_64 Linux lab. Directory must exist BEFORE loading the rule.
+# Preserve the protected-folder rule for the after-hours alert.
+-a always,exit -F arch=b64 -F dir=/srv/kernelguard/protected -F perm=rw -F key=kernelguard_protected
+# Record file opens in the user's home and mounted storage.
+# System libraries and services with an unset login UID are excluded to limit volume.
+-a always,exit -F arch=b64 -S open,openat,openat2,creat -F dir=/home/kali -F auid>=1000 -F auid!=unset -F key=kernelguard_file_access
+-a always,exit -F arch=b32 -S open,openat,openat2,creat -F dir=/home/kali -F auid>=1000 -F auid!=unset -F key=kernelguard_file_access
+-a always,exit -F arch=b64 -S open,openat,openat2,creat -F dir=/run/media/kali/Acer -F auid>=1000 -F auid!=unset -F key=kernelguard_file_access
+-a always,exit -F arch=b32 -S open,openat,openat2,creat -F dir=/run/media/kali/Acer -F auid>=1000 -F auid!=unset -F key=kernelguard_file_access
+-a always,exit -F arch=b64 -S open,openat,openat2,creat -F dir=/media -F auid>=1000 -F auid!=unset -F key=kernelguard_file_access
+-a always,exit -F arch=b32 -S open,openat,openat2,creat -F dir=/media -F auid>=1000 -F auid!=unset -F key=kernelguard_file_access
+-a always,exit -F arch=b64 -S open,openat,openat2,creat -F dir=/mnt -F auid>=1000 -F auid!=unset -F key=kernelguard_file_access
+-a always,exit -F arch=b32 -S open,openat,openat2,creat -F dir=/mnt -F auid>=1000 -F auid!=unset -F key=kernelguard_file_access
+-a always,exit -F arch=b64 -S execve,execveat -F auid>=1000 -F auid!=unset -F key=kernelguard_process_exec
+-a always,exit -F arch=b32 -S execve,execveat -F auid>=1000 -F auid!=unset -F key=kernelguard_process_exec

@@ -1,0 +1,59 @@
+# START Arshpreet Singh: collect Linux Audit events and commit the audit cursor.
+def collect_once(engine, cfg):
+    """Read only Phase 2 event kinds from Linux Audit, with a committed cursor."""
+    boot = Path("/proc/sys/kernel/random/boot_id").read_text().strip()
+    key = "phase2-audit:" + digest(cfg["host_id"] + ":" + boot)
+    mode_key = key + ":mode"
+    time_key = key + ":time"
+    with writer_lock(engine):
+        with engine.connect() as conn:
+            saved = checkpoint_get(conn, key)
+            time_mode = checkpoint_get(conn, mode_key) == "time"
+            saved_time = checkpoint_get(conn, time_key)
+            health = checkpoint_get(conn, "phase2_collector_health")
+        with tempfile.TemporaryDirectory(prefix="kernelguard-phase2-") as directory:
+            cursor = Path(directory) / "audit.cursor"
+            end_time = None
+            if not time_mode:
+                if saved:
+                    cursor.write_text(saved, encoding="utf-8")
+                command = ["ausearch", "--input-logs", "--checkpoint", str(cursor), "--raw"]
+                if not saved:
+                    command += ["--start", "boot"]
+                result = subprocess.run(command, capture_output=True, text=True, timeout=45)
+                if result.returncode == 12 and "Corrupted checkpoint file" in result.stderr:
+                    time_mode = True
+                    print("Phase 2 collector: audit clock changed; using time-window recovery.",
+                          flush=True)
+            if time_mode:
+                end_time = int(time.time())
+                last_poll = json.loads(health).get("last_poll") if health else None
+                start_time = int(saved_time or min(last_poll or end_time - 600, end_time)) - 10
+                start_time = max(0, min(start_time, end_time))
+                def audit_date(epoch):
+                    return datetime.fromtimestamp(epoch, timezone.utc).strftime(
+                        "%m/%d/%y %H:%M:%S").split()
+                command = ["ausearch", "--input-logs", "--start", *audit_date(start_time),
+                           "--end", *audit_date(end_time), "--raw"]
+                result = subprocess.run(command, capture_output=True, text=True, timeout=45,
+                                        env={**os.environ, "TZ": "UTC", "LC_ALL": "C"})
+            diagnostic = (result.stdout + "\n" + result.stderr).strip()
+            if result.returncode != 0 and not (
+                    result.returncode == 1 and diagnostic in ("", "<no matches>")):
+                raise RuntimeError(f"ausearch failed ({result.returncode}): {diagnostic}")
+            records = [row for row in parse_audit(
+                result.stdout, cfg["host_id"], "live", boot_id=boot)
+                if row["kind"] in PHASE2_KINDS]
+            with engine.begin() as conn:
+                inserted = sum(ingest(conn, row, cfg)
+                               for row in records)
+                if time_mode:
+                    checkpoint_set(conn, mode_key, "time")
+                    checkpoint_set(conn, time_key, str(end_time))
+                elif cursor.exists():
+                    checkpoint_set(conn, key, cursor.read_text(encoding="utf-8"))
+                checkpoint_set(conn, "phase2_collector_health",
+                               json.dumps({"last_poll": int(time.time()),
+                                           "inserted": inserted}))
+    print(f"Phase 2 collector: inserted {inserted} events.", flush=True)
+# END Arshpreet Singh: Linux Audit collection and checkpoint handling.
