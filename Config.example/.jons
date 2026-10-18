@@ -1,0 +1,9 @@
+{
+  "host_id": "kernelguard-lab",
+  "protected_path": "/srv/kernelguard/protected",
+  "timezone": "Asia/Kolkata",
+  "allowed_start_hour": 9,
+  "allowed_end_hour": 18,
+  "login_threshold": 5,
+  "login_window_seconds": 300
+}
