@@ -22,10 +22,10 @@
 <tr>
 
 <th>ID</th>
-<th>Hostname</th>
-<th>OS</th>
-<th>IP Address</th>
-<th>Status</th>
+<th>Identifier</th>
+<th>Type</th>
+<th>Device Name</th>
+<th>Known</th>
 
 </tr>
 
@@ -38,10 +38,17 @@
 <tr>
 
 <td>{{ device.device_id }}</td>
-<td>{{ device.hostname }}</td>
-<td>{{ device.os }}</td>
-<td>{{ device.ip_address }}</td>
-<td>{{ device.status }}</td>
+<td>{{ device.device_identifier }}</td>
+<td>{{ device.device_type }}</td>
+<td>{{ device.device_name }}</td>
+
+<td>
+{% if device.is_known == 1 %}
+Known
+{% else %}
+Unknown
+{% endif %}
+</td>
 
 </tr>
 

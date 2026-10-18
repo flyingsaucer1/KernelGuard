@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request
-from config import cursor
-
+from flask import Flask, render_template, request, redirect
+from config import cursor, db
 app = Flask(__name__)
 
 @app.route("/")
@@ -28,7 +27,8 @@ def dashboard():
 
     cursor.execute("SELECT COUNT(*) AS total FROM alerts")
     alerts = cursor.fetchone()["total"]
-    
+    print("Alerts Count =", alerts)
+
     cursor.execute("""
 SELECT alerts.alert_id,
        alerts.alert_type,
@@ -44,17 +44,6 @@ ON alerts.event_id = activity_events.event_id
     alert_list = cursor.fetchall()
     search = request.args.get("search")
 
-    if search: 
-     cursor.execute("""
-        SELECT * FROM activity_events
-        WHERE event_type LIKE %s
-        OR process_name LIKE %s
-        OR resource LIKE %s
-    """, (f"%{search}%", f"%{search}%", f"%{search}%"))
-    else:
-     cursor.execute("SELECT * FROM activity_events")
-    
-    event_list = cursor.fetchall()
     cursor.execute("""
     SELECT event_type, process_name, event_time
     FROM activity_events
@@ -76,25 +65,69 @@ ON alerts.event_id = activity_events.event_id
         cursor.execute("SELECT * FROM activity_events")
 
     event_list = cursor.fetchall()
-
+    chart_data = [users, sessions, devices, events]
+    alert_data = [alerts, events] 
+    
     return render_template(
-        "dashboard.html",
-        users=users,
-        sessions=sessions,
-        devices=devices,
-        events=events,
-        alerts=alerts,
-        event_list=event_list,
-        alert_list=alert_list,
-        recent_events=recent_events,
-        high_alerts=high_alerts,
-        medium_alerts=medium_alerts,
-        low_alerts=low_alerts,
-    )
+    "dashboard.html",
+    users=users,
+    sessions=sessions,
+    devices=devices,
+    events=events,
+    alerts=alerts,
+    chart_data=chart_data,
+    alert_data=alert_data,
+    event_list=event_list,
+    alert_list=alert_list,
+    recent_events=recent_events,
+    high_alerts=high_alerts,
+    medium_alerts=medium_alerts,
+    low_alerts=low_alerts
+)
 print("Users route loaded")
 @app.route("/users")
 def users():
 
+    cursor.execute("SELECT * FROM users")
+    user_list = cursor.fetchall()
+
+    return render_template("users.html", user_list=user_list)
+
+@app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
+def edit_user(user_id):
+
+    if request.method == "POST":
+        username = request.form["username"]
+        role = request.form["role"]
+
+        cursor.execute("""
+        UPDATE users
+        SET username=%s, role=%s
+        WHERE user_id=%s
+        """, (username, role, user_id))
+
+        db.commit()
+
+        return redirect("/users")
+
+    cursor.execute("SELECT * FROM users WHERE user_id=%s", (user_id,))
+    user = cursor.fetchone()
+
+    return render_template("edit_user.html", user=user)
+
+@app.route("/delete_user/<int:user_id>")
+def delete_user(user_id):
+
+    cursor.execute("DELETE FROM users WHERE user_id=%s", (user_id,))
+    db.commit()
+
+    return redirect("/users")
+
+
+    cursor.execute("SELECT * FROM users WHERE user_id=%s", (user_id,))
+    user = cursor.fetchone()
+
+    return render_template("edit_user.html", user=user)
     search = request.args.get("search")
 
     if search:

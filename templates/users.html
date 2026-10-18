@@ -13,6 +13,7 @@
 <div class="container mt-5">
 
     <h2 class="mb-4">👤 Users</h2>
+    
     <form method="GET" class="mb-3">
 
     <input
@@ -22,6 +23,9 @@
         placeholder="Search Username">
 
 </form>
+<a href="/add_user" class="btn btn-success mb-3">
+    + Add User
+</a>
     <table class="table table-bordered table-striped">
 
         <thead class="table-dark">
@@ -31,6 +35,7 @@
                 <th>Username</th>
                 <th>Role</th>
                 <th>Created At</th>
+                <th>Action</th>
             </tr>
 
         </thead>
@@ -44,6 +49,16 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.role }}</td>
                 <td>{{ user.created_at }}</td>
+                <td>
+    <a href="/edit_user/{{ user.user_id }}" class="btn btn-warning btn-sm">
+        Edit
+    </a>
+    <a href="/delete_user/{{ user.user_id }}"
+   class="btn btn-danger btn-sm"
+   onclick="return confirm('Are you sure you want to delete this user?')">
+    Delete
+</a>
+</td>
             </tr>
 
         {% endfor %}

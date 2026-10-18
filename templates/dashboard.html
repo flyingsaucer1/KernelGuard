@@ -175,79 +175,12 @@ Search
 </table>
 <hr>
 
+<hr>
+
 <h3>Alert Evidence</h3>
 
 <table class="table table-bordered table-striped">
-    <hr>
 
-<div class="card mt-4">
-
-    <div class="card-header bg-dark text-white">
-        <h4>🕒 Recent Activities</h4>
-    </div>
-
-    <div class="card-body">
-
-        <table class="table table-bordered table-striped">
-
-            <thead>
-
-                <tr>
-                    <th>Event</th>
-                    <th>Process</th>
-                    <th>Time</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-            {% for event in recent_events %}
-
-                <tr>
-                    <td>{{ event.event_type }}</td>
-                    <td>{{ event.process_name }}</td>
-                    <td>{{ event.event_time }}</td>
-                </tr>
-
-            {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-<hr>
-
-<h3>🕒 Recent Activities</h3>
-
-<table class="table table-bordered table-striped">
-
-<thead class="table-dark">
-<tr>
-    <th>Event</th>
-    <th>Process</th>
-    <th>Time</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% for event in recent_events %}
-
-<tr>
-    <td>{{ event.event_type }}</td>
-    <td>{{ event.process_name }}</td>
-    <td>{{ event.event_time }}</td>
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
     <thead class="table-danger">
         <tr>
             <th>Alert ID</th>
@@ -277,24 +210,95 @@ Search
     </tbody>
 
 </table>
+
+<hr>
+
+<div class="card mt-4">
+
+<div class="card-header bg-dark text-white">
+<h4>🕒 Recent Activities</h4>
+</div>
+
+<div class="card-body">
+
+<table class="table table-bordered">
+
+<thead class="table-dark">
+<tr>
+<th>Event</th>
+<th>Process</th>
+<th>Time</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for event in recent_events %}
+
+<tr>
+
+<td>{{ event.event_type }}</td>
+<td>{{ event.process_name }}</td>
+<td>{{ event.event_time }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
 <hr>
 
 <h3>Dashboard Analytics</h3>
 
 <div class="row">
 
-    <div class="col-md-6">
-        <canvas id="eventChart"></canvas>
-    </div>
-
-    <div class="col-md-6">
-        <canvas id="alertChart"></canvas>
-    </div>
-
+<div class="col-md-6">
+<canvas id="eventChart"></canvas>
 </div>
+
+<div class="col-md-6">
+<canvas id="alertChart"></canvas>
 </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const eventChart = document.getElementById("eventChart");
  
+if (eventChart) {
+    new Chart(eventChart, {
+        type: "bar",
+        data: {
+            labels: ["Users", "Sessions", "Devices", "Events"],
+            datasets: [{
+                label: "System Statistics",
+                data: [{{ users }}, {{ sessions }}, {{ devices }}, {{ events }}]
+            }]
+        }
+    });
+}
+
+const alertChart = document.getElementById("alertChart");
+
+if (alertChart) {
+    new Chart(alertChart, {
+        type: "pie",
+        data: {
+            labels: ["Alerts", "Events"],
+            datasets: [{
+                data: [{{ alerts }}, {{ events }}]
+            }]
+        }
+    });
+}
+</script>
 </body>
 </html>
